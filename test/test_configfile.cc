@@ -1,4 +1,4 @@
-#include <boost/test/auto_unit_test.hpp>
+#include <boost/test/unit_test.hpp>
 
 #include "testsuite.hh"
 #include <utilmm/configfile/configfile.hh>
@@ -6,21 +6,22 @@
 #include <boost/filesystem/path.hpp>
 #include <utilmm/stringtools.hh>
 #include <algorithm>
+#include <memory>
 
 using namespace utilmm;
 using namespace boost::filesystem;
 using namespace std;
 
-auto_ptr<config_file> setup()
+unique_ptr<config_file> setup()
 {
     path testdir = path(__FILE__).branch_path();
 #if BOOST_VERSION >= 104600
-    return auto_ptr<config_file>(new config_file( (testdir / "test_configfile.config").string().c_str() ));
+    return unique_ptr<config_file>(new config_file( (testdir / "test_configfile.config").string().c_str() ));
 #else
-    return auto_ptr<config_file>(new config_file( (testdir / "test_configfile.config").native_file_string().c_str() ));
+    return unique_ptr<config_file>(new config_file( (testdir / "test_configfile.config").native_file_string().c_str() ));
 #endif
 }
-#define SETUP auto_ptr<config_file> config( setup() )
+#define SETUP unique_ptr<config_file> config( setup() )
 
 
 BOOST_AUTO_TEST_CASE( test_basic_properties )
@@ -205,4 +206,3 @@ BOOST_AUTO_TEST_CASE( test_commandline )
     BOOST_REQUIRE_NO_THROW( cmdline.parse(2, overriding_default_value, config) );
     BOOST_REQUIRE_EQUAL(20, config.get<int>("defval"));
 }
-

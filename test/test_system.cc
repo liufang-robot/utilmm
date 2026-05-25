@@ -1,4 +1,4 @@
-#include <boost/test/auto_unit_test.hpp>
+#include <boost/test/unit_test.hpp>
 
 #include "testsuite.hh"
 #include <utilmm/system/system.hh>
@@ -7,6 +7,7 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/lexical_cast.hpp>
 #include <iostream>
+#include <memory>
 #include <errno.h>
 using namespace utilmm;
 using std::string;
@@ -80,7 +81,7 @@ BOOST_AUTO_TEST_CASE( test_socket )
 
     server.wait();
     BOOST_REQUIRE(server.try_wait());
-    std::auto_ptr<socket> accepted(server.accept());
+    std::unique_ptr<socket> accepted(server.accept());
 
     // Should not have an incoming connection
     BOOST_REQUIRE(!server.try_wait());

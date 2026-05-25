@@ -85,8 +85,7 @@ namespace utilmm {
 	}
 
 	boost::filesystem::path p(str);
-	return p.normalize();
+	return p.lexically_normal();
     }
 }
 #endif
-

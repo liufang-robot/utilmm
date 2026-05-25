@@ -14,7 +14,7 @@ using namespace std;
 
 unique_ptr<config_file> setup()
 {
-    path testdir = path(__FILE__).branch_path();
+    path testdir = path(__FILE__).parent_path();
 #if BOOST_VERSION >= 104600
     return unique_ptr<config_file>(new config_file( (testdir / "test_configfile.config").string().c_str() ));
 #else

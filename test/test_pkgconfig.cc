@@ -10,7 +10,7 @@ using namespace boost::filesystem;
 
 BOOST_AUTO_TEST_CASE( test_exists )
 {
-    path testdir = path(__FILE__).branch_path();
+    path testdir = path(__FILE__).parent_path();
 #if BOOST_VERSION >= 104600
     setenv("PKG_CONFIG_PATH", testdir.string().c_str(), 1);
 #else
@@ -33,4 +33,3 @@ BOOST_AUTO_TEST_CASE( test_exists )
     BOOST_REQUIRE( pc.linker() == "-L/opt/i386-linux/lib -lpkgconfig_test" );
     BOOST_REQUIRE( pc.linker(pkgconfig::Libraries) == "-lpkgconfig_test" );
 }
-

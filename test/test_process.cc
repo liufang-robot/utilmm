@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE( test_environment )
 
 BOOST_AUTO_TEST_CASE( test_run )
 {
-    path testdir = path(__FILE__).branch_path();
+    path testdir = path(__FILE__).parent_path();
     tempfile tmpfile("bla");
     
     process copy;
@@ -85,7 +85,7 @@ void assert_closed(int fd)
 }
 BOOST_AUTO_TEST_CASE( test_redirect )
 {
-    path testdir = path(__FILE__).branch_path();
+    path testdir = path(__FILE__).parent_path();
     int files[2];
     pipe(files);
     auto_close read_guard(files[0]);
@@ -115,4 +115,3 @@ BOOST_AUTO_TEST_CASE( test_redirect )
 
     BOOST_REQUIRE_EQUAL(source, output);
 }
-

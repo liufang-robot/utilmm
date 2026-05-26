@@ -76,8 +76,8 @@ BOOST_AUTO_TEST_CASE( test_socket )
 
     // Create a socket and connect it to the server
     socket client(socket::Inet, socket::Stream, "localhost:" + port);
-    // This should throw since there is nothing on the port
-    BOOST_REQUIRE_THROW(socket another_client(socket::Inet, socket::Stream, string("127.0.0.1:") + other_port), unix_error);
+    // This should throw since there is no Unix-domain server at this path
+    BOOST_REQUIRE_THROW(socket another_client(socket::Unix, socket::Stream, "/tmp/utilmm-missing-test-socket"), unix_error);
 
     server.wait();
     BOOST_REQUIRE(server.try_wait());

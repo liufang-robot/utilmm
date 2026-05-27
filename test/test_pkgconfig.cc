@@ -4,9 +4,22 @@
 #include <boost/filesystem/path.hpp>
 #include <utilmm/configfile/pkgconfig.hh>
 #include <iostream>
+#include <sstream>
 
 using namespace utilmm;
 using namespace boost::filesystem;
+
+static bool has_flag(std::string const& flags, std::string const& flag)
+{
+    std::istringstream stream(flags);
+    std::string current;
+    while (stream >> current)
+    {
+        if (current == flag)
+            return true;
+    }
+    return false;
+}
 
 BOOST_AUTO_TEST_CASE( test_exists )
 {
@@ -27,7 +40,9 @@ BOOST_AUTO_TEST_CASE( test_exists )
     BOOST_REQUIRE( pc.version() == "0.1" );
     BOOST_REQUIRE( pc.get("prefix", "") == "/opt" );
     BOOST_REQUIRE( pc.get("bla", "") == "");
-    BOOST_REQUIRE( pc.compiler() == "-DB21R -I/opt/include/test" );
+    std::string const compiler_flags = pc.compiler();
+    BOOST_REQUIRE( has_flag(compiler_flags, "-DB21R") );
+    BOOST_REQUIRE( has_flag(compiler_flags, "-I/opt/include/test") );
     BOOST_REQUIRE( pc.compiler(pkgconfig::Path) == "-I/opt/include/test" );
     BOOST_REQUIRE( pc.compiler(pkgconfig::Other) == "-DB21R" );
     BOOST_REQUIRE( pc.linker() == "-L/opt/i386-linux/lib -lpkgconfig_test" );

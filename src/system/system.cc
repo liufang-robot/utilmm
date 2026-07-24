@@ -31,10 +31,10 @@ unix_error::unix_error(int error_)
     : m_error(error_) { init_description(""); }
 unix_error::unix_error()
     : m_error(errno) { init_description(""); }
-unix_error::~unix_error() throw () {}
+unix_error::~unix_error() noexcept {}
 
 int unix_error::error() const { return m_error; }
-char const* unix_error::what() const throw()
+char const* unix_error::what() const noexcept
 { return m_desc; }
 
 auto_close::auto_close()
@@ -153,4 +153,3 @@ FILE* tempfile::detach()
 }
 
 boost::filesystem::path tempfile::path() const { return m_path; }
-

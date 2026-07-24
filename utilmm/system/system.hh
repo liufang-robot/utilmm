@@ -21,10 +21,10 @@ namespace utilmm
         explicit unix_error(std::string const& desc);
         explicit unix_error(int error);
         explicit unix_error();
-        ~unix_error() throw ();
+        ~unix_error() noexcept override;
         
         int error() const;
-        char const* what() const throw();
+        char const* what() const noexcept override;
 
     private:
         int m_error;
@@ -151,4 +151,3 @@ namespace utilmm
  * temporary files, sockets. These tools are tested on Linux but should be
  * portable to all POSIX-compliant OSes.
  */ 
-

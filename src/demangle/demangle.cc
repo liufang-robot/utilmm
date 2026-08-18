@@ -3,7 +3,7 @@
  */
 #include "utilmm/demangle/demangle.hh"
 
-#if 1 // This will be replaced by a test checking <cxxabi.h>
+#if !defined(_MSC_VER) // This will be replaced by a test checking <cxxabi.h>
 # include <cxxabi.h> 
 #include <cstdlib>
 
@@ -26,7 +26,9 @@ std::string utilmm::demangle(char const *name) {
 
 #else 
 
-# warning "Name demangling is not supported here"
+# if !defined(_MSC_VER)
+#  warning "Name demangling is not supported here"
+# endif
 
 std::string utilmm::demangle(char const *name) {
   std::string result(name);

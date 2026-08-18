@@ -29,7 +29,11 @@ std::string ConfigurationFinder::find( const std::string& configFile, const std:
 		fprintf(stderr, "WARNING: ConfigurationFinder: environment variable %s is not set\n", configEnv);
 	} else {
 
+#ifdef _WIN32
+        boost::split(searchDirectories, configurationDir, boost::is_any_of(";"));
+#else
 		boost::split(searchDirectories, configurationDir, boost::is_any_of(":"));
+#endif
 	}
 
 	if(packagename != "")

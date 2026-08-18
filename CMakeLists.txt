@@ -9,8 +9,16 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
-FIND_PACKAGE(Boost COMPONENTS unit_test_framework)
-FIND_PACKAGE(Boost REQUIRED graph filesystem thread regex system)
+IF(MSVC)
+    option(ENABLE_TESTS "if tests should be built" OFF)
+    FIND_PACKAGE(Boost CONFIG REQUIRED COMPONENTS graph filesystem thread regex system)
+    IF (ENABLE_TESTS)
+        FIND_PACKAGE(Boost CONFIG REQUIRED COMPONENTS unit_test_framework)
+    ENDIF()
+ELSE()
+    FIND_PACKAGE(Boost COMPONENTS unit_test_framework)
+    FIND_PACKAGE(Boost REQUIRED graph filesystem thread regex system)
+ENDIF()
 
 include_directories(${CMAKE_BINARY_DIR}) # to get cmake-generated utilmm/config/config.h
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
@@ -30,8 +38,10 @@ INSTALL(DIRECTORY utilmm/ DESTINATION include/utilmm
     PATTERN "*.in" EXCLUDE)
 INSTALL(FILES package.xml DESTINATION share/utilmm)
 
+IF(NOT MSVC)
 set(ENABLE_TESTS ${Boost_UNIT_TEST_FRAMEWORK_FOUND}
     CACHE BOOL "if tests should be built")
+ENDIF()
 IF (ENABLE_TESTS)
     enable_testing()
     MESSAGE(STATUS "boost/test found ... building test suite")

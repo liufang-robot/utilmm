@@ -12,8 +12,11 @@
 #include <boost/bind.hpp>
 #include <boost/type_traits/remove_pointer.hpp>
 
-// FIXME: that's for Linux only
-#include <dlfcn.h> 
+#ifdef _WIN32
+# include <windows.h>
+#else
+# include <dlfcn.h>
+#endif
 
 #include <iostream>
 
@@ -26,7 +29,11 @@ namespace utilmm { namespace plugin {
         void operator()(T)
         {
             std::cout << "Killing DLL\n";
+#ifdef _WIN32
+            FreeLibrary(static_cast<HMODULE>(h));
+#else
             dlclose(h);
+#endif
         }
         void* h;
     };
@@ -46,10 +53,22 @@ namespace utilmm { namespace plugin {
             
             // Open the library. Yes, we do it on every access to 
             // a symbol, see the design discussion in the documentation.
+#ifdef _WIN32
+            void* handle = LoadLibraryA(m_name.c_str());
+#else
             void* handle = dlopen(m_name.c_str(), RTLD_LAZY|RTLD_GLOBAL);
+#endif
             if (!handle) {
                 throw std::logic_error("Could not open DLL");
             }
+#ifdef _WIN32
+            void* address = reinterpret_cast<void*>(
+                GetProcAddress(static_cast<HMODULE>(handle), symbol_name.c_str()));
+            if (!address) {
+                FreeLibrary(static_cast<HMODULE>(handle));
+                throw std::logic_error("Could not resolve symbol in DLL");
+            }
+#else
             // Clear the error state.
             dlerror();
             void* address = dlsym(handle, symbol_name.c_str());
@@ -57,12 +76,11 @@ namespace utilmm { namespace plugin {
             if (error) {
                 throw std::logic_error(error);
             }
+#endif
             // Cast the to right type.
             SymbolType s = (SymbolType)(address);
 
-            boost::shared_ptr<PointedType> result(s, 
-                                                  //killer(handle));
-                                                  boost::bind(dlclose, handle));
+            boost::shared_ptr<PointedType> result(s, killer(handle));
             
             return result;            
         }        
